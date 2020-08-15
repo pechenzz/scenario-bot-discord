@@ -49,8 +49,8 @@ async def scenario(ctx, argpersona, argpersonb):
 
 	persons = ([argpersona], [argpersonb])
 
-	X = persons[persona]
-	Y = persons[personb]
+	X = '**' + ''.join(persons[persona]) + '**'
+	Y = '**' + ''.join(persons[personb]) + '**'
     
     #finally the output part, its super messed up, sorry for that
 	embed=discord.Embed(title=f"Scenario #{scennumb+1}", description=str(scenarios[scennumb]).replace('{X}', str(X).replace("['", "").replace("']", "")).replace('{Y}', str(Y).replace("['", "").replace("']", "")), color=random.randint(0, 0xFFFFFF))
