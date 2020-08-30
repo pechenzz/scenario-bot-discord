@@ -10,19 +10,23 @@ import sys
 
 bot = commands.Bot(command_prefix = 'sc!', help_command=None)
 TOKEN = ''
+owner_id = 435750383491481602
 
 @bot.event
 async def on_ready():
-    #show python version and servers the bot is in
 	print(f'Bot is running at Python {sys.version.split()[0]} on {len(bot.guilds)} servers')
 	print('=-=-=-=-=-=-=-=-=-=-=-=')
-    #display custom listening status
-	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{len(bot.guilds)} servers | HALFWAY TO 10 SERVERS!!! thank you all!❤"))
+	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{len(bot.guilds)} servers | what if we were next to eachother on the userlist 😳😳😳 | prefix is sc!"), status=discord.Status.idle)
 
 @bot.event
 async def on_guild_join(guild):
-    #when the bot joins a new guild, update the status
-	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{len(bot.guilds)} servers | HALFWAY TO 10 SERVERS!!! thank you all!❤"))
+	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{len(bot.guilds)} servers | what if we were next to eachother on the userlist 😳😳😳 | prefix is sc!"), status=discord.Status.idle)
+	await bot.get_user(owner_id).send(f"Joined {guild.name} with {len(guild.members)} members")
+	
+@bot.event
+async def on_guild_remove(guild):
+	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{len(bot.guilds)} servers | what if we were next to eachother on the userlist 😳😳😳 | prefix is sc!"), status=discord.Status.idle)
+	await bot.get_user(owner_id).send(f"Left {guild.name} with {len(guild.members)} members")
 
 @bot.command(pass_context=True)
 async def scenario(ctx, argpersona, argpersonb):
@@ -34,9 +38,7 @@ async def scenario(ctx, argpersona, argpersonb):
 	scenarios = scenariostr.split('\n')
     #close the file
 	scenariof.close()
-    
-    #mix the scenarios up
-	random.shuffle(scenarios)
+
     #select a certain scenario
 	scennumb = random.randint(0, 97)
     #the code to mix up the inputs
@@ -52,28 +54,34 @@ async def scenario(ctx, argpersona, argpersonb):
 	X = '**' + ''.join(persons[persona]) + '**'
 	Y = '**' + ''.join(persons[personb]) + '**'
     
-    #finally the output part, its super messed up, sorry for that
-	embed=discord.Embed(title=f"Scenario #{scennumb+1}", description=str(scenarios[scennumb]).replace('{X}', str(X).replace("['", "").replace("']", "")).replace('{Y}', str(Y).replace("['", "").replace("']", "")), color=random.randint(0, 0xFFFFFF))
-	embed.set_footer(text="Bot by yourordinaryred#2736 | Scenarios from https://creativichee.tumblr.com/miniscenario")
+    #finally the output part, now a bit more fixed
+	scop = str(scenarios[scennumb]).replace('1', str(X)).replace('2', str(Y))
+	embed=discord.Embed(title=f"Scenario #{scennumb+1}", description=scop, color=random.randint(0, 0xFFFFFF))
+	embed.set_footer(text=f"Bot by {bot.get_user(owner_id).name}#{bot.get_user(owner_id).discriminator} | Scenarios from https://creativichee.tumblr.com/miniscenario")
 	await ctx.send(embed=embed)
+	await bot.get_user(owner_id).send(f"{ctx.author.name} used **{ctx.message.content}** in **{ctx.guild.name}** and got [{scop}]")
 
 #invite command
 @bot.command()
 async def invite(ctx):
 	embed=discord.Embed(title="Invite bot", url='https://discord.com/api/oauth2/authorize?client_id=736665323159289897&permissions=2048&scope=bot', color=random.randint(0, 0xFFFFFF))
-	embed.set_footer(text="Bot by yourordinaryred#2736 | Scenarios from https://creativichee.tumblr.com/miniscenario")
+	embed.set_footer(text=f"Bot by {bot.get_user(owner_id).name}#{bot.get_user(owner_id).discriminator} | Scenarios from https://creativichee.tumblr.com/miniscenario")
 	await ctx.send(embed=embed)
 	
 @bot.command()
 async def ping(ctx):
-	msgs = {
-	['Pong!'],
-	[f"{ctx.message.author.mention}. You asked for it, so don't complain!"],
-	['Someone except the owner actually uses it?'],
-	['I, EvaX, humbly subm- Wait, wrong user!!'],
-	['Mi pan, zum zum zum, zum zum zum. Mi pan, yakasus, nan nan nan'],
-	['mkk'],
-	['haha ping go brr']}
+	user = random.choice(ctx.message.channel.guild.members)
+	msgs = ['Pong!'], [f"{ctx.message.author.mention}. You asked for it, so don't complain!"], ['Someone except the owner actually uses it?'], ['I, EvaX, humbly subm- Wait, wrong user!!'], ['mkk'], ['haha ping go brr'], ['YOU HAVE WON NITRO! CLICK THI- wait wrong dm'], ['REEEEEEEEEEEEEEEEEEEEEEEEE'], [f'You want fun? {user.name} show you fun!'], ['get stickbugged lol'], ["""
+Mario: Time to take a piss.
+Goomba: What the hell are you doing?
+Mario: I'm taking a piss.
+Goomba: Okay, but why aren't you jumping on me? That's what you're supposed to do.
+Mario: I might do it frucking later.
+Goomba: No, I'm a motherfrucking enemy, you're supposed to jump on me.
+Mario: Okie dokie then, let me pull up my pants again first, and then maybe I'll jump on you.
+Goomba: Maybe? Maybe?! Are you out of your frocking mind?! No! Jump on me now, motherfrucker!
+Mario: Let me get my pants first!
+Goomba: Ugh, fine..."""], ['maybe you could eat blades of grass'], ['but ummm, look, guys, look, its one of my greatest achivements, wario land 4 on gameboy advance, **HAHA**']
 	
 	msgnumb = random.randint(0, len(msgs))
 	
@@ -86,7 +94,7 @@ async def help(ctx):
 	embed.add_field(name="sc!help", value="Sends this embed.", inline=False)
 	embed.add_field(name="sc!invite", value="Sends an invite for this bot.", inline=False)
 	embed.add_field(name="sc!ping", value="Shows the latency of the bot (The only command with humor).", inline=False)
-	embed.set_footer(text="Bot by yourordinaryred#2736 | Scenarios from https://creativichee.tumblr.com/miniscenario")
+	embed.set_footer(text=f"Bot by {bot.get_user(owner_id).name}#{bot.get_user(owner_id).discriminator} | Scenarios from https://creativichee.tumblr.com/miniscenario")
 	await ctx.send(embed=embed)
 
 
